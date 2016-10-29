@@ -1,7 +1,11 @@
-
 from nltk import *
 
 def getResponse(user_query):
+
+    if(user_query == "good morning" or user_query == "Hello"):
+        return "Hello, what would you like to eat today?"
+
+
     text = user_query
     sents = word_tokenize(text)
     tagged_token = pos_tag(sents)
