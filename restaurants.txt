@@ -1,0 +1,3 @@
+Farsan Mart	artesia	cheap	indian
+hello	santa monica	expensive	italian
+hi	hollywood	moderate	mexican
