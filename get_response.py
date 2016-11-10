@@ -11,13 +11,13 @@ import random
 def buttonAction(user_query):
 
     var = StringVar()
-    label = Label( root, textvariable=var, relief=RAISED, bg = 'red')
+    label = Label(root, textvariable=var, relief=RAISED, bg = 'red')
     var.set(user_query)
     label.pack()
 
     reply = getReponse(user_query)
     var = StringVar()
-    label = Message(root, textvariable=var, relief=RAISED, width = 1000, bg = 'green')
+    label = Message(root, textvariable=var, relief=RAISED, width = 1000, bg = 'green', justify=RIGHT)
 
     var.set(reply)
     label.pack()
@@ -69,19 +69,26 @@ def edits2(word):
     "All edits that are two edits away from `word`."
     return (e2 for e1 in edits1(word) for e2 in edits1(e1))
 
+agree_keywords = ["yes", "yeah", "Yes", "yo", "Yo"]
+reject_keywords = ["No", "no", "nah"]
 location_dict = ["artesia", "hollywood" , "figueroa"]
-cuisine_dict = ["italian","mexican","indian","american"]
+cuisine_dict = ["italian","mexican","indian","thai", "chinese", "pizza"]
+cheap_price = ["cheap", "cheaper", "low", "inexpensive"]
+moderate_price = ["moderate"]
+high_price = ["expensive", "high"]
 current_state = 'none'
-loc_question_list = ["Where would you like to eat?","Which place you'd like to go today?","What area are youb looking for?","Do you have places in your mind?"]
-cuisine_question_list = ["Which cuisine would you like to have?","What's cooking on your mind?","Which country food would you like to have for your taste bud?","Ola amigo, what would like to try today?"]
+loc_question_list = ["Where would you like to eat?","Which place you'd like to go today?","What area are you looking for?","Do you have places in your mind?"]
+cuisine_question_list = ["Which cuisine would you like to have?","What's cooking on your mind?","Ola amigo, what would like to try today?"]
+price_question_list = ["What price category are you looking for?"]
 info_dict = {}
-
+confirmation = 'none'
 
 # This function extracts all the relevant info from the user query
 # Accordingly, it will design an appropriate response
 def getReponse(user_query):
 
-    global current_state
+    global current_state                # this could be "location", "cuisine" or "price" depending on which information is not yet provided
+    global confirmation
 
     user_query = user_query.lower()
 
@@ -96,10 +103,11 @@ def getReponse(user_query):
             if sents[i] not in location_dict:
                 sents[i] = correction(sents[i])
 
-
         tagged_token = pos_tag(sents)
         for words in tagged_token:
-            if(words[1] == "NNP" or words[1] == "NN" or words[1] == "JJ"):
+
+            print (words[1])
+            if(words[1] == "NNP" or words[1] == "NN" or words[1] == "JJ" or words[1]== "NNS" or words[1] == "DT"):
 
                 if(words[0] in location_dict):
                     info_dict['Location'] = words[0]
@@ -107,11 +115,36 @@ def getReponse(user_query):
                 if(words[0] in cuisine_dict):
                     info_dict['Cuisine'] = words[0]
 
+                if(words[0] in cheap_price):
+                    info_dict['Price'] = "Cheap"
+
+                elif(words[0] in moderate_price):
+                    info_dict['Price'] = "Moderate"
+
+                elif(words[0] in high_price):
+                    info_dict['Price'] = "Expensive"
+
+                if(words[0] in agree_keywords):
+                    confirmation = "Yes"
+
+                if(words[0] in reject_keywords):
+                    confirmation = "No"
+
+        if confirmation == "Yes" and current_state == 'confirmation':
+            return 'Ok buddy, I will be back in a minute'
+        if confirmation == "No" and current_state == 'confirmation':
+            current_state = "location"
+            info_dict.clear()
+            return 'Sorry for the misunderstanding friend. Where would you want to eat today?'
+
         if current_state == 'location' and 'Location' not in info_dict:
             return 'Sorry, would you please mention your preferred location?'
 
         if current_state == 'cuisine' and 'Cuisine' not in info_dict:
             return 'I am unable to find restaurants that match your requirements. Try a different cuisine.'
+
+        if current_state == 'price' and 'Price' not in info_dict:
+            return 'Sorry, would you please mention your budget?'
 
         if 'Location' not in info_dict:
             current_state = 'location'
@@ -121,9 +154,13 @@ def getReponse(user_query):
             current_state = 'cuisine'
             cuisine_question = random.choice(cuisine_question_list)
             return cuisine_question
+        elif 'Price' not in info_dict:
+            current_state = 'price'
+            price_question = random.choice(price_question_list)
+            return price_question
         else:
-            return 'Is this alright? Cuisine: '+info_dict['Cuisine']+' and Location: '+info_dict['Location']
-
+            current_state = 'confirmation'
+            return 'Is this alright? Cuisine: '+info_dict['Cuisine']+' and Location: '+info_dict['Location']+' and Price:'+info_dict['Price']+'?'
 
 root = tkinter.Tk()
 frame = Frame(root)
@@ -137,7 +174,6 @@ v = StringVar()
 
 E1 = Entry(frame, bd =5, textvariable= v)
 E1.pack(side = LEFT)
-
 
 # offset time is -8 for PST
 greeting_message = getTime(-8, time.time())
