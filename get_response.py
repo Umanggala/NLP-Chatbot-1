@@ -6,7 +6,7 @@ import tkinter
 import time
 
 from collections import Counter
-
+import random
 
 def buttonAction(user_query):
 
@@ -72,7 +72,8 @@ def edits2(word):
 location_dict = ["artesia", "hollywood" , "figueroa"]
 cuisine_dict = ["italian","mexican","indian","american"]
 current_state = 'none'
-
+loc_question_list = ["Where would you like to eat?","Which place you'd like to go today?","What area are youb looking for?","Do you have places in your mind?"]
+cuisine_question_list = ["Which cuisine would you like to have?","What's cooking on your mind?","Which country food would you like to have for your taste bud?","Ola amigo, what would like to try today?"]
 info_dict = {}
 
 
@@ -114,10 +115,12 @@ def getReponse(user_query):
 
         if 'Location' not in info_dict:
             current_state = 'location'
-            return 'Which area?'
+            loc_question = random.choice(loc_question_list)
+            return loc_question
         elif 'Cuisine' not in info_dict:
             current_state = 'cuisine'
-            return 'Which cuisine would you like to have?'
+            cuisine_question = random.choice(cuisine_question_list)
+            return cuisine_question
         else:
             return 'Is this alright? Cuisine: '+info_dict['Cuisine']+' and Location: '+info_dict['Location']
 
