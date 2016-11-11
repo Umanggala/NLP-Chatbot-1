@@ -8,6 +8,14 @@ import time
 from collections import Counter
 import random
 
+from gtts import *
+import os
+
+def textToSpeech(text_input):
+    tts = gTTS(text=text_input,lang='en')
+    tts.save('output.mp3')
+    os.system("mpg321 output.mp3")
+
 def buttonAction(user_query):
 
     var = StringVar()
@@ -17,7 +25,7 @@ def buttonAction(user_query):
 
     reply = getReponse(user_query)
     var = StringVar()
-    label = Message(root, textvariable=var, relief=RAISED, width = 1000, bg = 'green', justify=RIGHT)
+    label = Message(root, textvariable=var, relief=RAISED, width = 1000, bg = 'green')
 
     var.set(reply)
     label.pack()
@@ -93,6 +101,7 @@ def getReponse(user_query):
     user_query = user_query.lower()
 
     if user_query == "good morning":
+        textToSpeech("Good morning, how are you doing today?")
         return "Good morning, how are you doing today?"
 
     else:
@@ -109,6 +118,8 @@ def getReponse(user_query):
             print (words[1])
             if(words[1] == "NNP" or words[1] == "NN" or words[1] == "JJ" or words[1]== "NNS" or words[1] == "DT"):
 
+                # Update the dictionary with all the received information
+
                 if(words[0] in location_dict):
                     info_dict['Location'] = words[0]
 
@@ -116,13 +127,13 @@ def getReponse(user_query):
                     info_dict['Cuisine'] = words[0]
 
                 if(words[0] in cheap_price):
-                    info_dict['Price'] = "Cheap"
+                    info_dict['Price'] = "cheap"
 
                 elif(words[0] in moderate_price):
-                    info_dict['Price'] = "Moderate"
+                    info_dict['Price'] = "moderate"
 
                 elif(words[0] in high_price):
-                    info_dict['Price'] = "Expensive"
+                    info_dict['Price'] = "expensive"
 
                 if(words[0] in agree_keywords):
                     confirmation = "Yes"
@@ -131,35 +142,45 @@ def getReponse(user_query):
                     confirmation = "No"
 
         if confirmation == "Yes" and current_state == 'confirmation':
+            textToSpeech('Ok buddy, I will be back in a minute')
             return 'Ok buddy, I will be back in a minute'
         if confirmation == "No" and current_state == 'confirmation':
+            textToSpeech('Sorry for the misunderstanding friend. Where would you want to eat today?')
             current_state = "location"
             info_dict.clear()
             return 'Sorry for the misunderstanding friend. Where would you want to eat today?'
 
         if current_state == 'location' and 'Location' not in info_dict:
+            textToSpeech('Sorry, would you please mention your preferred location?')
             return 'Sorry, would you please mention your preferred location?'
 
         if current_state == 'cuisine' and 'Cuisine' not in info_dict:
+            textToSpeech('I am unable to find restaurants that match your requirements. Try a different cuisine.')
             return 'I am unable to find restaurants that match your requirements. Try a different cuisine.'
 
         if current_state == 'price' and 'Price' not in info_dict:
+            textToSpeech('Sorry, would you please mention your budget?')
             return 'Sorry, would you please mention your budget?'
 
         if 'Location' not in info_dict:
             current_state = 'location'
             loc_question = random.choice(loc_question_list)
+            textToSpeech(loc_question)
             return loc_question
         elif 'Cuisine' not in info_dict:
             current_state = 'cuisine'
             cuisine_question = random.choice(cuisine_question_list)
+            textToSpeech(cuisine_question)
             return cuisine_question
         elif 'Price' not in info_dict:
             current_state = 'price'
             price_question = random.choice(price_question_list)
+            textToSpeech(price_question)
             return price_question
         else:
             current_state = 'confirmation'
+            final_confirmation = 'Is this alright? Cuisine: '+info_dict['Cuisine']+' and Location: '+info_dict['Location']+' and Price:'+info_dict['Price']+'?'
+            textToSpeech(final_confirmation)
             return 'Is this alright? Cuisine: '+info_dict['Cuisine']+' and Location: '+info_dict['Location']+' and Price:'+info_dict['Price']+'?'
 
 root = tkinter.Tk()
