@@ -43,7 +43,6 @@ def getTime(user_offset, system_time):
     elif 16 <= user_hour < 24:
         return 'Good evening, how may I help you today?'
 
-import insert_data
 def words(text): return re.findall(r'\w+', text.lower())
 
 WORDS = Counter(words(open('big.txt').read()))
@@ -147,13 +146,19 @@ def getReponse(user_query):
             output, suggestion_dict = insert_data.set_data(info_dict["Cuisine"],info_dict["Location"],info_dict["Price"])
 
             if(len(suggestion_dict)>0):
-                print('Suggestions available')
+                print(suggestion_dict)
+                suggestion_string = "Unfortunately ratings of "+info_dict["Cuisine"]+" restaurants at "+info_dict["Location"]+" aren't that great"
+                suggestion_string += "\n I would suggest you go to "+suggestion_dict["Location"]+" or try "+suggestion_dict["Cuisine"]+" at "+info_dict["Location"]
+                textToSpeech(suggestion_string)
+                current_state = "location_update"
+                change_request = "Should I update your location preference?"
+                textToSpeech(change_request)
+                return suggestion_string + change_request
             else:
                 print('Perfect choice')
-            textToSpeech(output)
-            return output
+                textToSpeech(output)
+                return output
 
-            return 'Ok buddy, I will be back in a minute'
         if confirmation == "No" and current_state == 'confirmation':
             textToSpeech('Sorry for the misunderstanding friend. Where would you want to eat today?')
             current_state = "location"
@@ -197,6 +202,9 @@ root = tkinter.Tk()
 frame = Frame(root)
 frame.pack()
 
+
+
+
 bottomframe = Frame(root)
 bottomframe.pack( side = BOTTOM )
 
@@ -219,6 +227,10 @@ label.pack()
 
 B =tkinter.Button(frame, text ="Send", command = lambda:buttonAction(v.get()))
 B.pack(side = RIGHT)
+
+background_image = PhotoImage(file="bg.png")
+label = Label(root, image=background_image)
+label.pack()
 
 root.mainloop()
 
