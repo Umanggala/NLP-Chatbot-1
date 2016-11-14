@@ -194,6 +194,11 @@ def getReponse(user_query):
             return 'Is this alright? Cuisine: '+info_dict['Cuisine']+' and Location: '+info_dict['Location']+' and Price:'+info_dict['Price']+'?'
 
 root = tkinter.Tk()
+
+scrollbar = Scrollbar(root)
+scrollbar.pack(side=RIGHT,fill=Y)
+
+
 frame = Frame(root)
 frame.pack()
 
@@ -219,6 +224,11 @@ label.pack()
 
 B =tkinter.Button(frame, text ="Send", command = lambda:buttonAction(v.get()))
 B.pack(side = RIGHT)
+
+background_image = PhotoImage(file="bg.png")
+label = Label(root, image=background_image)
+label.pack()
+
 
 root.mainloop()
 
