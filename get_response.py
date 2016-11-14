@@ -237,9 +237,6 @@ background_image = PhotoImage(file="bg.png")
 label = Label(root, image=background_image)
 label.pack()
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 7d4865ccfbf03c379dbd661cb5f1954e17bd1791
 root.mainloop()
 
