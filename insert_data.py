@@ -5,8 +5,21 @@ import csv
 client = MongoClient()
 db = client.test
 
+global cuisine_search
+global location_search
+global price_tag_search
+
 #Inserts the data from the file.
 #Format: restaurant_name <tab> place <tab> price_range <tab> cuisine
+
+def set_data(cuisine,location,price_tag):
+    global cuisine_search
+    global location_search
+    global price_tag_search
+
+    cuisine_search = cuisine
+    location_search = location
+    price_tag_search = price_tag
 
 def insert_data_from_text():
 
@@ -189,38 +202,59 @@ def search_location_data(search_location):
         return max_average, cursor5
 
 
+def set_data(cuisine, location, price_tag):
+    global cuisine_search
+    global location_search
+    global price_tag_search
 
-restaurant = insert_data_from_text()
-insert_into_database(restaurant)
-sum_rating = 0
-number_of_results = 0
-restaurant_names = search_data("mexican","cheap","santa monica")
-average_rating = 0
+    cuisine_search = cuisine
+    location_search = location
+    price_tag_search = price_tag
 
-for i in restaurant_names:
-    sum_rating = sum_rating + int(restaurant_names.get(i)[1])
-    number_of_results += 1
+    restaurant = insert_data_from_text()
+    insert_into_database(restaurant)
+    sum_rating = 0
+    number_of_results = 0
+    restaurant_names = search_data(cuisine_search,price_tag_search,location_search)
+    average_rating = 0
+    suggestion_dict = {}
 
-    if(number_of_results > 0):
-        average_rating = sum_rating / number_of_results
+    for i in restaurant_names:
+        sum_rating = sum_rating + int(restaurant_names.get(i)[1])
+        number_of_results += 1
+
+        if(number_of_results > 0):
+            average_rating = sum_rating / number_of_results
+        else:
+            average_rating = 0
+
+    result = ""
+    flag = 0
+
+
+    if(average_rating >= 3):
+        result = "Good choice. Here are few options\n"
+        for i in restaurant_names:
+            print(restaurant_names.get(i)[0] + "\n")
+            result += restaurant_names.get(i)[0] +  "\n"
+            flag = 1
+        return result, suggestion_dict
+
     else:
-        average_rating = 0
+        print("Locations for amazing mexican food")
+        rating, cursor = search_data_cuisine(cuisine_search)
 
-if(average_rating >= 3):
+        for document in cursor:
+            suggestion_dict['Location'] = document['address']
+            result += document['name'] + " at " + document['address'] + "\n"
 
-    print(restaurant_names)
-else:
 
-    print("Locations for amazing mexican food")
-    rating, cursor = search_data_cuisine("mexican")
-    for document in cursor:
-        print(document['name'],document['address'],document['cuisine'])
-
-    print()
-    print("Cuisine at santa monica")
-    rating , cursor = search_location_data("santa monica")
-    for document in cursor:
-        print(document['name'],document['address'],document['cuisine'])
+        print("Cuisine at santa monica")
+        rating , cursor = search_location_data(location_search)
+        for document in cursor:
+            suggestion_dict['Cuisine'] = document['cuisine']
+            result += document['name'] + " at " + document['address'] + "\n"
+        return result,suggestion_dict
 
 
 
