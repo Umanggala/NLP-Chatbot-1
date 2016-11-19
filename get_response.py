@@ -1,4 +1,5 @@
 from nltk import *
+import speech_recognition as sr
 
 from tkinter import *
 import tkinter
@@ -15,7 +16,8 @@ import insert_data
 def textToSpeech(text_input):
     tts = gTTS(text=text_input,lang='en')
     tts.save('output.mp3')
-    os.system("mpg321 output.mp3")
+    os.startfile("output.mp3")
+    #os.system("mpg321 output.mp3")
 
 def buttonAction(user_query):
 
@@ -85,6 +87,7 @@ cheap_price = ["cheap", "cheaper", "low", "inexpensive"]
 moderate_price = ["moderate"]
 high_price = ["expensive", "high"]
 current_state = 'none'
+cities =  {"Los Angeles":["Los","Angeles"],"santa monica":["santa","monica"],"Marina Del Ray":["Marina","Del","Ray"]}
 loc_question_list = ["Where would you like to eat?","Which place you'd like to go today?","What area are you looking for?","Do you have places in your mind?"]
 cuisine_question_list = ["Which cuisine would you like to have?","What's cooking on your mind?","Ola amigo, what would like to try today?"]
 price_question_list = ["What price category are you looking for?"]
@@ -93,6 +96,26 @@ global suggestion_dict
 suggestion_dict = {}
 confirmation = 'none'
 update = 'none'
+
+def listenQuery():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        audio = r.listen(source)
+
+    user_query = r.recognize_google(audio)
+    var = StringVar()
+
+    label = Label(root, textvariable=var, relief=RAISED, bg='red')
+    var.set(user_query)
+    label.pack()
+
+    reply = getReponse(user_query)
+    var = StringVar()
+    label = Message(root, textvariable=var, relief=RAISED, width=1000, bg='green')
+
+    var.set(reply)
+    label.pack()
+
 
 # This function extracts all the relevant info from the user query
 # Accordingly, it will design an appropriate response
@@ -119,6 +142,23 @@ def getReponse(user_query):
                 sents[i] = correction(sents[i])
 
         tagged_token = pos_tag(sents)
+
+        found_match = False
+
+        for words in tagged_token:
+            if found_match:
+                cityTest = cityTest
+            else:
+                cityTest = ''
+            found_match = False
+            for city in cities.keys():
+                if words[0] in cities[city]:
+                    cityTest += words[0] + ' '
+                    found_match = True
+                if cityTest.split(' ')[0:-1] == city.split(' '):
+                    print(city)
+                    info_dict['Location'] = city
+
         for words in tagged_token:
 
             print (words[1])
@@ -154,6 +194,10 @@ def getReponse(user_query):
                     update = "Cuisine"
 
         if current_state == "update":
+
+
+
+
             if update == "Location":
                 info_dict['Location'] = suggestion_dict['Location']
                 output, suggestion_dict = insert_data.set_data(info_dict["Cuisine"],info_dict["Location"],info_dict["Price"])
@@ -255,11 +299,14 @@ var.set(greeting_message)
 label.pack()
 # We then extract the user query and call the getResponse function
 
+C =tkinter.Button(frame, text ="Listen", command = lambda:listenQuery())
+C.pack(side = RIGHT)
+
 B =tkinter.Button(frame, text ="Send", command = lambda:buttonAction(v.get()))
 B.pack(side = RIGHT)
 
-background_image = PhotoImage(file="ab.gif")
-label = Label(root, image=background_image)
-label.pack()
+# background_image = PhotoImage(file="ab.gif")
+# label = Label(root, image=background_image)
+# label.pack()
 
 root.mainloop()

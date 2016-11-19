@@ -30,7 +30,7 @@ def insert_data_from_text():
     cuisine = ""
     count = 1
 
-    with open("restaurants.csv", 'r', errors='replace') as csvfile:
+    with open("/Users/umanggala/Desktop/Courses/NLP/NLP-Chatbot/restaurants.csv", 'r', errors='replace') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             name = row[0]
@@ -228,10 +228,16 @@ def set_data(cuisine, location, price_tag):
         else:
             average_rating = 0
 
+
     result = ""
     flag = 0
 
-    if(average_rating >= 3):
+    if(average_rating == 0):
+
+        result = "Apparently there are no restaurants with the query specified. Kindly suggest something else"
+        return result, suggestion_dict
+
+    elif(average_rating >= 3):
         result = "Good choice. Here are few options\n"
         for i in restaurant_names:
             print(restaurant_names.get(i)[0] + "\n")
