@@ -89,7 +89,10 @@ loc_question_list = ["Where would you like to eat?","Which place you'd like to g
 cuisine_question_list = ["Which cuisine would you like to have?","What's cooking on your mind?","Ola amigo, what would like to try today?"]
 price_question_list = ["What price category are you looking for?"]
 info_dict = {}
+global suggestion_dict
+suggestion_dict = {}
 confirmation = 'none'
+update = 'none'
 
 # This function extracts all the relevant info from the user query
 # Accordingly, it will design an appropriate response
@@ -97,6 +100,9 @@ def getReponse(user_query):
 
     global current_state                # this could be "location", "cuisine" or "price" depending on which information is not yet provided
     global confirmation
+    global suggestion_dict
+    global update
+    global output
 
     user_query = user_query.lower()
 
@@ -141,6 +147,30 @@ def getReponse(user_query):
                 if(words[0] in reject_keywords):
                     confirmation = "No"
 
+                if(words[0] == "location" and current_state == 'update'):
+                    update = "Location"
+
+                if(words[0] == "cuisine" and current_state == 'update'):
+                    update = "Cuisine"
+
+        if current_state == "update":
+            if update == "Location":
+                info_dict['Location'] = suggestion_dict['Location']
+                output, suggestion_dict = insert_data.set_data(info_dict["Cuisine"],info_dict["Location"],info_dict["Price"])
+                textToSpeech(output)
+                return output
+
+            elif update == "Cuisine":
+                info_dict['Cuisine'] = suggestion_dict['Cuisine']
+                output, suggestion_dict = insert_data.set_data(info_dict["Cuisine"],info_dict["Location"],info_dict["Price"])
+                return output
+
+            else:
+                textToSpeech('Dont blame me if you have a bad experience!')
+                textToSpeech('Here are your options')
+                textToSpeech(output)
+                return output
+
         if confirmation == "Yes" and current_state == 'confirmation':
             textToSpeech('Ok buddy, I will be back in a minute')
             output, suggestion_dict = insert_data.set_data(info_dict["Cuisine"],info_dict["Location"],info_dict["Price"])
@@ -150,12 +180,12 @@ def getReponse(user_query):
                 suggestion_string = "Unfortunately ratings of "+info_dict["Cuisine"]+" restaurants at "+info_dict["Location"]+" aren't that great"
                 suggestion_string += "\n I would suggest you go to "+suggestion_dict["Location"]+" or try "+suggestion_dict["Cuisine"]+" at "+info_dict["Location"]
                 textToSpeech(suggestion_string)
-                current_state = "location_update"
-                change_request = "Should I update your location preference?"
+                current_state = "update"
+                change_request = "What should I update for you: Location, Cuisine or nothing?"
                 textToSpeech(change_request)
                 return suggestion_string + change_request
             else:
-                print('Perfect choice')
+                textToSpeech('Great choice')
                 textToSpeech(output)
                 return output
 
@@ -203,12 +233,8 @@ root = tkinter.Tk()
 scrollbar = Scrollbar(root)
 scrollbar.pack(side=RIGHT,fill=Y)
 
-
 frame = Frame(root)
 frame.pack()
-
-
-
 
 bottomframe = Frame(root)
 bottomframe.pack( side = BOTTOM )
@@ -227,16 +253,13 @@ var = StringVar()
 label = Label( root, textvariable=var, relief=RAISED)
 var.set(greeting_message)
 label.pack()
-
 # We then extract the user query and call the getResponse function
 
 B =tkinter.Button(frame, text ="Send", command = lambda:buttonAction(v.get()))
 B.pack(side = RIGHT)
 
-background_image = PhotoImage(file="bg.png")
+background_image = PhotoImage(file="ab.gif")
 label = Label(root, image=background_image)
 label.pack()
 
-
 root.mainloop()
-

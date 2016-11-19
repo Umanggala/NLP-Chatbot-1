@@ -37,9 +37,6 @@ for i in range(data.shape[0]):
 
     train_X = np.concatenate((train_X, current_row), axis=0)
 
-print(train_X)
-print(train_Y)
-
 logreg = linear_model.LogisticRegression(C=1)
 logreg.fit(train_X, train_Y)
 
