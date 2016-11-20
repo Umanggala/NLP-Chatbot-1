@@ -30,7 +30,7 @@ def insert_data_from_text():
     cuisine = ""
     count = 1
 
-    with open("/Users/umanggala/Desktop/Courses/NLP/NLP-Chatbot/restaurants.csv", 'r', errors='replace') as csvfile:
+    with open("restaurants.csv", 'r', errors='replace') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             name = row[0]
