@@ -1,0 +1,43 @@
+I want to eat Chinese today,provide_cuisine
+Find me Italian restaurants,provide_cuisine
+I would like to eat Italian today,provide_cuisine
+I am in a mood to eat Chinese today,provide_cuisine
+I want to go to Artesia,provide_location
+Find me restaurants in Artesia,provide_location
+Restaurants in Artesia,provide_location
+Italian restaurants,provide_cuisine
+Restaurants at artesia,provide_location
+look for restaurants at figueroa,provide_location
+restaurants near artesia,provide_location
+can you fine me mexican places,provide_cuisine
+can you help me find italian restaurants,provide_cuisine
+i am looking for cheap restaurants,provide_price
+i am looking for expensive restaurants,provide_price
+cheap restaurants,provide_price
+expensive places,provide_price
+i want to find an expensive restaurant,provide_price
+can you help me find a cheap restaurant,provide_price
+can you help me find an expensive restaurant,provide_price
+can you help me find a moderately priced restaurant,provide_price
+moderately priced places,provide_price
+moderately priced,provide_price
+moderately expensive,provide_price
+restaurants near figueroa,provide_location
+restaurants near santa monica,provide_location
+I want to go to figueroa,provide_location
+I want to go to santa monica,provide_location
+I want to go to hollywood,provide_location
+I want to eat mexican today,provide_cuisine
+I want to eat indian today,provide_cuisine
+mexican restaurants,provide_cuisine
+indian restaurants,provide_cuisine
+thai restaurants,provide_cuisine
+i want to eat pizza today,provide_cuisine
+i want to go to beverly,provide_location
+i want to eat thai today,provide_cuisine
+help me find pizza places,provide_cuisine
+help me find restaurants in artesia,provide_location
+please find me thai restaurants,provide_cuisine
+moderate,provide_price
+expensive,provide_price
+low,provide_price
